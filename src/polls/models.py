@@ -27,6 +27,70 @@ class Choice(models.Model):
         return self.choice_text
 
 
+# 
+class GeneralEnEs(models.Model):
+     id = models.IntegerField(primary_key=True)  # AutoField?
+     source = models.TextField()
+     target = models.TextField()
+     level = models.IntegerField()
+     entrydate = models.DateTimeField(db_column='entryDate')  # Field name made lowercase.
+     def translation(self):
+     	return self.target
+     def __unicode__(self):
+     	return self.source 
+     def niveau(self):
+     	return self.level
+     class Meta:
+         db_table = 'general_en_es'
+
+
+class SubsEnEs(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    source = models.TextField()
+    target = models.TextField()
+    level = models.IntegerField()
+    entrydate = models.DateTimeField(db_column='entryDate')  # Field name made lowercase.
+    def translation(self):
+	return self.target
+    def __unicode__(self):
+	return self.source
+    def niveau(self):
+	return self.level
+    class Meta:
+        db_table = 'subs_en_es'
+
+
+class EuconstEnEs(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    source = models.TextField()
+    target = models.TextField()
+    level = models.IntegerField()
+    entrydate = models.DateTimeField(db_column='entryDate')  # Field name made lowercase.
+    def translation(self):
+	return self.target
+    def __unicode__(self):
+	return self.source
+    def niveau(self):
+	return self.level
+    class Meta:
+        db_table = 'euconst_en_es'
+        
+        
+class ThelittleprinceEnEs(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    source = models.TextField()
+    target = models.TextField()
+    level = models.IntegerField()
+    entrydate = models.DateTimeField(db_column='entryDate')  # Field name made lowercase.   
+    def translation(self):
+	return self.target
+    def __unicode__(self):
+	return self.source 
+    def niveau(self):
+     	return self.level
+    class Meta:
+        db_table = 'thelittleprince_en_es'
+        
 class TatoebaEnEs(models.Model):
     id = models.IntegerField(primary_key=True)  # AutoField?
     source = models.TextField()
@@ -163,18 +227,6 @@ class DjangoSession(models.Model):
     class Meta:
         managed = False
         db_table = 'django_session'
-
-
-class GeneralEnEs(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
-    source = models.TextField()
-    target = models.TextField()
-    level = models.IntegerField()
-    entrydate = models.DateTimeField(db_column='entryDate')  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'general_en_es'
 
 
 class PollsChoice(models.Model):
