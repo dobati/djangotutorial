@@ -1,0 +1,184 @@
+ <html>
+ <head> 
+<!--{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href= "{% static "polls/bootstrap_min.css" }" /> -->
+
+<!-- CSS -->
+<style>
+body {
+    text-align:center;
+    background:WhiteSmoke;
+}
+h1 {
+    color: maroon;
+    margin-left: 40px;
+}
+
+h3 {
+    margin-left: 40px;
+    font-family: Gill Sans Extrabold, sans-serif;
+}
+
+li { 
+text-align: center; 
+}
+
+div { 
+text-align: center;
+}
+
+}
+.fancy {
+  width: 500px;
+  margin: 20px auto;
+  padding: 50px;
+  border-width: 10px;
+}
+
+.simple {
+  width: 500px;
+  margin: 20px auto;
+  padding: 10px;
+  border-width: 10px;
+}
+
+p {
+font-family: Gill Sans Extrabold, sans-serif;
+display:inline;
+}
+
+table, th, td {
+font-family: Gill Sans Extrabold, sans-serif;
+text-align: left;
+}
+
+table.center {
+    margin-left:auto; 
+    margin-right:auto;
+  }
+
+.highlight {-moz-text-decoration-line: underline;
+  -moz-text-decoration-style: wavy;
+  -moz-text-decoration-color: red; }
+  
+
+</style>
+<!-- end CSS -->
+
+
+<!-- JavaScript $('td').highlight(); -->
+
+ <script type="text/javascript"> 
+ 
+ function helpwords() { 
+ alert("words to be found in the database!");  
+ }
+  
+ </script> 
+<!-- end JavaScript -->
+
+ </head>
+
+<body>
+<div class="container">
+      <div class="simple">
+      
+      
+        <table border="0" class="center">    
+           <tr>
+           	   <!-- For each choice something give an introductory sentence-->
+   				<td> {{ chosen_topic  }} </td>
+  		   </tr>	   
+  		   <tr>
+    			<td> Try to translate this sentence to Spanish: </td>
+ 			 </tr>
+		</table>
+      
+       		 <!-- or:
+       		 
+       		 <p> {{ chosen_topic  }} </p> 	you can add | safe if you have tags in views
+			 
+			 -->
+   
+        </div>
+	 
+	 	<!-- Random sentence to be translated --> 
+	 	 <h3><b>  {% csrf_token %} {{ r }} </b></h3>  
+
+          
+</div>
+
+<form name="form" method="post" action="" autocomplete="off">
+ <div class="container">
+      <div class="fancy">
+      
+      		<!-- Text box for user input -->      
+              <h3>  {% csrf_token %} {{ form.as_p	}} </h3> <!-- {{ form.as_p}}--> 
+
+			<!-- HELP pop up window  -->
+ 			 <input type="button" value="Help!" onclick="helpwords()" />     
+ 			    
+ 			 <!--  SUBMIT  button -->
+ 			<input type="submit" class="btn btn-success btn-md" value="Send">  
+      </div>
+ </div>
+</form>
+
+
+<div class="container">
+      <div class="fancy">
+      
+         <form action="" method="post">
+         
+         <!-- make a table! -->
+         	<table border="0" class="center">
+         
+          	 <tr>
+   					<td> {{ your_translation }} </td>
+    			  <!--<td>{% csrf_token %}{{ saved_tr }}</td> -->
+    			 	<td>{{ saved_tr | safe  }} </td> <!--  | safe  without safe we have '<span class="highlight">'+word+'</span>'-->
+    			
+  		   	</tr>
+  		   
+  		  </form>
+  		   
+  		   <tr>
+    			<td> {{ reference_translation }} </td>
+   	 			<td> {% csrf_token %}{{ t }}</td>
+ 			 </tr>
+		</table>
+
+     </div>
+</div> 
+
+
+
+<!-- The evaluation of the user-->
+
+<div class="container">
+      <div class="simple">
+	 		<p> {% csrf_token %}{{ evaluate_user }} </p>
+     </div>
+</div>
+
+
+
+
+<div class="container">
+      <div class="simple">
+			<form>
+			 <input type="submit" name="next_sent" value="Next" />
+			</form>
+     </div>
+</div>
+
+			
+<li><a href='{% url "index" %}'> Back to main menu</a></li>
+
+</body>
+</html>
+
+
+
+ 
+ 

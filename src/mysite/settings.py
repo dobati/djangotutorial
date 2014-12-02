@@ -88,3 +88,18 @@ USE_TZ = True
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
 STATIC_URL = '/static/'
+
+
+#if DEBUG:
+
+STATIC_ROOT = ""
+
+
+
+
+
+
+
+
+
+
