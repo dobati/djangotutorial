@@ -92,7 +92,11 @@ STATIC_URL = '/static/'
 
 #if DEBUG:
 
-STATIC_ROOT = ""
+#STATIC_ROOT = ""
+
+STATICFILES_DIRS = (
+					os.path.join(BASE_DIR, "static"),
+					)
 
 
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import random
 import re
 import string
@@ -48,19 +49,38 @@ def compare(targettrans, usertrans):
     @ usertrans: translation provided by the user '''
     
     evaluation = {'very good': ['Superb translation!', 'Great work!'], \
-                  'good': ['Good translation! See the sample translation below for comparison.', \
-                            'Nice work! Check out the sample translation to see where you can improve.'], \
+                  'good': ['Good translation!', \
+                            'Nice work!'], \
                   'fair': ['You can do better!', 'Shall we practice a little more?']
                   }
     
     #encode from latin-1 because of python unicode problems!
     
     tt = targettrans.encode('latin-1') #'ascii' codec can't encode character u'\xed' in position 12: ordinal not in range(128)
-    ut = str(usertrans) # 'ascii' codec can't encode character u'\xe1' in position 14: ordinal not in range(128)
     
+    #try:
+    #ut = usertrans.decode("ascii", "ignore")
+    
+    #----------------- ENCODING PROBLEM---------------------------------------------------
+    #   
+    ut = str(usertrans) 
+    #
+    # Wenn der user einen Sonderzeichen schreibet, bekomme ich den Error:
+    #
+    # 'ascii' codec can't encode character u'\xe1' in position 14: ordinal not in range(128)
+    #
+    # Wenn ich schreibe:
+    #
+    # ut = usertrans.encode('latin-1')
+    #
+    # bekomme ich trotzdem Fehlermeldungen, obwohl es für tt = targettrans.encode('latin-1')  funkioniert!
+   
+	#----------------- ENCODING PROBLEM---------------------------------------------------
+ 
     
 	# ignore the punctuation in both translation so that Levenstein ratio is 1 
 	# when user translation is "No" and reference is "NO!"
+    
     replace_punctuation = string.maketrans(string.punctuation, ' '*len(string.punctuation))
     
     tt = tt.translate(replace_punctuation).lower()	
