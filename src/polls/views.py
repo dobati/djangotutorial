@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # views.py
 
 # Imports
@@ -36,9 +37,14 @@ import string, re
 
 #import Levenshtein as lev
 import functions
-from .functions import compare
+from .functions import help_words
 from .functions import spelling_checker
+from .functions import compare_ref
+from .functions import compare_mt
 
+#from django.utils import simplejson
+import json as simplejson
+from django.core import serializers
 
 
 # Views for the index and about us pages
@@ -46,14 +52,18 @@ from .functions import spelling_checker
 
 # View for the main page:
 def index(request):
-    return render_to_response("polls/index.html",
+    return render_to_response("index.html", locals(),
                               context_instance = RequestContext(request))
                               
 # View for the page about us                           
-def aboutus(request):
-    return render_to_response("polls/aboutus.html",
+def about_us(request):
+    return render_to_response("about_us.html", locals(),
                               context_instance = RequestContext(request))
                               
+# View for the page about Vé                      
+def about_ve(request):
+    return render_to_response("about_ve.html", locals(),
+                              context_instance = RequestContext(request))
 
 # Views for the pages where the user is asked to enter user input
 # ========================================================================================
@@ -98,63 +108,67 @@ def legaltexts3(request):
 	return trans(request,  "Your choice: Legal Texts, level 3", EuconstEnEs, 3)
 
 
-                
-
 # Function trans() : main view
 # ========================================================================================
 
 random_list = []
-def trans(request, message, dbtable, levelchoice):  
 
+#counter = 0
+
+def trans(request, message, dbtable, levelchoice):
+    
 	"""Main function: takes the user input and returns the reference translation
 	after the user submits the input"""
+	
+	
 	
 	chosen_topic = message
 	your_translation = 'Your translation:'
 	reference_translation = 'Reference translation:'
-	randomchoice =random.choice(dbtable.objects.filter(level=levelchoice))
-	random_list.append(randomchoice)
+	machine_translation = 'Machine translation:'
+	
+	randomchoice = random.choice(dbtable.objects.filter(level=levelchoice))
+	random_list.append(randomchoice)	
+	machine_trans_of_randomchoice_tok = randomchoice.machine_translation_tok()
+	
+	
+	# call die help function to make suggestions to the user
+	help_words(randomchoice,machine_trans_of_randomchoice_tok)
 	
 	form = UserInputForm(request.POST or None)
+	
 	if form.is_valid():
-		userinputmodel = UserInput()
-		
+		userinputmodel = UserInput()		
 		userinputmodel.translation = form.cleaned_data.get('form_translation')
-		previous_randomchoice = random_list[-2]		
-		saved_trans = userinputmodel.translation #.save() we cannot save unicode objects!	
+		previous_randomchoice = random_list[-2]
+		saved_trans = userinputmodel.translation 	
 		spelling_checker(saved_trans)
 		
-		
-		evaluate_user = compare(previous_randomchoice.translation(), saved_trans)
-							
-		return render(request, "polls/translate.html",
+		feedback_user = compare_ref(saved_trans, previous_randomchoice.translation())
+		compare_to_mt = compare_mt(saved_trans, previous_randomchoice.translation(), previous_randomchoice.machine_translation_detok())
+				
+		return render(request, "translate.html", 
                                           { 
-                                          'chosen_topic': message,
-    					 				  'r': previous_randomchoice ,
-                                          'form': form,
-                                          'your_translation': your_translation, 
-                                          'saved_tr':functions.saved_tr, # we are importing the variable saved_tr from the module functions
-                                          'reference_translation': reference_translation,
-                                          't' :previous_randomchoice.translation(),
-                                          'evaluate_user': evaluate_user,
-
+					    'chosen_topic': message,
+					    'r': previous_randomchoice ,
+					    'form': form,
+					    'your_translation': your_translation, 
+					    'saved_tr':functions.saved_tr, # we are importing the variable saved_tr from the module functions
+					    'user_trans': saved_trans,
+					    'reference_translation': reference_translation,
+					    'machine_translation': machine_translation,
+					    't' :previous_randomchoice.translation(),
+					    'machine_t' : previous_randomchoice.machine_translation_detok(), 
+					    'feedback_user': feedback_user,
+					    'compare_to_mt': compare_to_mt,
 					  })
-       	return render(request, "polls/translate.html",
-                                   { 
-                                   'chosen_topic': message,
-                                   'r': randomchoice,
-  				  					'form': form,
-                                       }) 
+	else:
+	    form = UserInputForm()
 
-
-
-        
-# TO DO:
-# 1. since the orderby ? was faster, think again if you want to use it instead of random.choice
-# 2. Get rid of the error message - This field is required.
-# CSS:
-
-#myDIV {
-#    text-decoration: underline;
-#    text-decoration-color:red;
-#}
+	
+	return render(request, "translate.html", {
+			'chosen_topic': message,
+			'r': randomchoice,
+			'form': form,
+			'js_data': functions.bothtranslations, # js_data muss die help funktion aufrufen
+		    })

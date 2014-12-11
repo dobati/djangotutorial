@@ -1,9 +1,9 @@
 from django.contrib import admin
-from polls.models import UserInput
-from polls.models import GeneralEnEs
-from polls.models import SubsEnEs
-from polls.models import EuconstEnEs
-from polls.models import ThelittleprinceEnEs
+from .models import UserInput
+from .models import GeneralEnEs
+from .models import SubsEnEs
+from .models import EuconstEnEs
+from .models import ThelittleprinceEnEs
 
 
 class TranslationsAdminG(admin.ModelAdmin):

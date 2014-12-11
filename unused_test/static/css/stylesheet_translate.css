@@ -1,0 +1,56 @@
+body {
+    text-align:center;
+    background:WhiteSmoke;
+}
+h1 {
+    color: maroon;
+    margin-left: 40px;
+}
+
+h3 {
+    margin-left: 40px;
+    font-family: Gill Sans Extrabold, sans-serif;
+}
+
+li { 
+text-align: center; 
+}
+
+div { 
+text-align: center;
+}
+
+}
+.fancy {
+  width: 500px;
+  margin: 20px auto;
+  padding: 50px;
+  border-width: 10px;
+}
+
+.simple {
+  width: 500px;
+  margin: 20px auto;
+  padding: 10px;
+  border-width: 10px;
+}
+
+p {
+font-family: Gill Sans Extrabold, sans-serif;
+display:inline;
+}
+
+table, th, td {
+font-family: Gill Sans Extrabold, sans-serif;
+text-align: left;
+}
+
+table.center {
+    margin-left:auto; 
+    margin-right:auto;
+  }
+
+.highlight {-moz-text-decoration-line: underline;
+  -moz-text-decoration-style: wavy;
+  -moz-text-decoration-color: red; }
+  

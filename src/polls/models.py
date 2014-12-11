@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # This is an auto-generated Django model module.
 
 # You'll have to do the following manually to clean this up:
@@ -19,15 +20,33 @@ class GeneralEnEs(models.Model):
      source = models.TextField()
      target = models.TextField()
      level = models.IntegerField()
+     detok = models.TextField()
+     tok = models.TextField()
      entrydate = models.DateTimeField(db_column='entryDate')  # Field name made lowercase.
+    
      def translation(self):
-     	return self.target
+     	#return self.target
+        return smart_unicode(self.target)
+    
      def __unicode__(self):
-     	return self.source 
+     	#return self.source
+        return smart_unicode(self.source)
+    
      def niveau(self):
      	return self.level
+    
+     def machine_translation_tok(self):
+	return smart_unicode(self.tok)
+    
+     def machine_translation_detok(self):
+	return smart_unicode(self.detok)
+
+     def sent_id(self):
+        return self.id
+    
      class Meta:
          db_table = 'general_en_es'
+         
 
 
 class SubsEnEs(models.Model):
@@ -35,15 +54,34 @@ class SubsEnEs(models.Model):
     source = models.TextField()
     target = models.TextField()
     level = models.IntegerField()
+    detok = models.TextField()
+    tok = models.TextField()
     entrydate = models.DateTimeField(db_column='entryDate')  # Field name made lowercase.
+    
     def translation(self):
-	return self.target
+	#return self.target
+        return smart_unicode(self.target)
+
     def __unicode__(self):
-	return self.source
+	#return self.source
+        return smart_unicode(self.source)
+   
+    def machine_translation_tok(self):
+	return smart_unicode(self.tok)	
+    
+    def machine_translation_detok(self):
+	return smart_unicode(self.detok)
+    
     def niveau(self):
 	return self.level
+
+    def sent_id(self):
+        return self.id
+    
     class Meta:
-        db_table = 'subs_en_es'
+        db_table = 'subs_en_es'      
+     
+
 
 
 class EuconstEnEs(models.Model):
@@ -51,15 +89,34 @@ class EuconstEnEs(models.Model):
     source = models.TextField()
     target = models.TextField()
     level = models.IntegerField()
+    tok = models.TextField()
+    detok = models.TextField()
     entrydate = models.DateTimeField(db_column='entryDate')  # Field name made lowercase.
+    
     def translation(self):
-	return self.target
+	#return self.target
+        return smart_unicode(self.target)
+	
     def __unicode__(self):
-	return self.source
+	#return self.source
+        return smart_unicode(self.source)
+	
+    def machine_translation_tok(self):
+	return smart_unicode(self.tok)
+		
+    def machine_translation_detok(self):
+	return smart_unicode(self.detok)
+	
     def niveau(self):
 	return self.level
+     
+    def sent_id(self):
+        return self.id
+	
     class Meta:
         db_table = 'euconst_en_es'
+        
+
         
         
 class ThelittleprinceEnEs(models.Model):
@@ -67,21 +124,37 @@ class ThelittleprinceEnEs(models.Model):
     source = models.TextField()
     target = models.TextField()
     level = models.IntegerField()
+    detok = models.TextField()
+    tok = models.TextField()
     entrydate = models.DateTimeField(db_column='entryDate')  # Field name made lowercase.   
+    
     def translation(self):
-	return self.target
+	#return self.target
+        return smart_unicode(self.target)
+
     def __unicode__(self):
-	return self.source 
+	return smart_unicode(self.source)
+    
+    def machine_translation_tok(self):
+	return smart_unicode(self.tok)
+		
+    def machine_translation_detok(self):
+	return smart_unicode(self.detok)		
+		 
     def niveau(self):
      	return self.level
+     
+    def sent_id(self):
+         return self.id
+    
     class Meta:
         db_table = 'thelittleprince_en_es'
+        
         
 
 
 class UserInput(models.Model):
 	# blank=False because the user input must be empty when we reload the page. 
-	# unfortunately I can't get rid of the error message "This field is required." by reloading the page
     
     translation = models.CharField(max_length=120, blank=False) 
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)

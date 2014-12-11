@@ -1,0 +1,156 @@
+<html>
+	<head> 
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		</meta>
+		{% load staticfiles %}
+
+		<!-- CSS -->
+
+		<!--Dolores' old stylesheet-->
+		<!-- <link rel="stylesheet" type="text/css" href= "{% static 'css/bootstrap_min.css' %}" /> -->
+		
+		<!--stylesheet for translate.html-->
+		<link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet_translate.css' %}"></link>
+
+		<!-- link to the css for the messi library (jquery needed) for the nice window with suggestions for the translation -->
+		<link rel="stylesheet" href= "{% static 'css/messi.min.css' %}" />
+
+		<!-- javascript (messi library) to have a nice looking pop up window with suggestions for the translation -->
+		<script src=" {% static 'js/messi.min.js' %}" ></script>
+		
+		<!-- retrieve the javascript source for jquery -->
+		<script src=" {% static 'js/jquery-1.11.1.min.js' %}" ></script>
+
+
+		<script type="text/javascript"> 
+ 
+
+			function helpwords() { 
+			//with the cool-looking Messi javascript library
+			new Messi('words to be found in the database!'); 
+			
+			 // with the simply boring pop-up window from javascript:
+ 			//alert("words to be found in the database!"); 
+ 			}
+	
+			function disable_submit() {
+			//solange nicht auf next geclickt wird: 
+   			document.getElementById("mySubmit").disabled = true;
+   			}
+   
+		// if we just want to hide the button: document.getElementById("mySubmit").style.display='none';
+
+
+		</script>
+
+<!-- end JavaScript -->
+	</head>
+
+	<body>
+		<div class="container">
+      		<div class="simple">   
+        		<table border="0" class="center">    
+           			<tr>
+           	   		<!-- For each choice something give an introductory sentence-->
+   						<td> {{ chosen_topic  }} </td>
+  		   			</tr>	   
+  		   			<tr>
+    					<td> Try to translate this sentence to Spanish: </td>
+ 			 		</tr>
+				</table>
+        </div> 
+	 	<!-- Random sentence to be translated --> 
+	 <h3><b>  {% csrf_token %} {{ r }} </b></h3>         
+	</div>
+
+<!--Form (user input & submits have to be packed in the same div, otherwise the clicks wort work!)-->
+
+	<form  name="form" method="post" action="" autocomplete="off"> 
+ 		<div class="container">
+      		<div class="fancy">
+      		<!-- Text box for user input -->      
+         		<h3>  {% csrf_token %} {{ form.as_p }} </h3> <!-- {{ form.as_p}} --> 
+
+			<!-- HELP pop up window  -->
+ 			 	<input type="button" value="Help!" onclick="helpwords()" />     
+ 			    
+ 			 <!--  SUBMIT  button -->
+ 			 <!-- it has to be disabled once the user has submitted the text 
+ 			 
+ 			 with the function disable_submit() the button is disabled only until the process of retrieving the translation in the database is on. 
+ 			 After that, I still want the button to be disabled. The reason I am doing that:
+ 			 if the user wants to see if his evaluation gets better by correcting something in his own input, 
+ 			 instead of seeing the same reference translation after correcting it, he will get a new random sentence and its reference translation
+ 			 To avoid having to adjust the code to that, I would rather just disable the button once its been clicked-->		 			 
+ 				<input id = "mySubmit" type="submit" class="btn btn-success btn-md" value="Send" id = "mySubmit" onclick="disable_submit()" /> 
+ 			 
+ 			 <!-- other trys to disable the Send button once its benn clicked -->
+ 			<!--<button id = "mySubmit" onclick="myFunction()">Try it</button>-->
+ 			<!--<input  type="submit"  value="Send"  class="btn btn-success btn-md" /> onclick="disable_submit()"-->
+      		</div>
+		</div>
+	</form>
+
+
+
+
+
+<div class="container">
+      <div class="fancy">
+      
+         <form action="" method="post">
+         
+         <!-- make a table! -->
+         	<table border="0" class="center">
+         
+          	 <tr>
+   					<td> {{ your_translation }} </td>
+    			  <!--<td>{% csrf_token %}{{ saved_tr }}</td> -->
+    			  
+    			  	
+    			 	<td>{{ saved_tr | safe  }} </td> <!--  | safe  is wichtig! without safe we have '<p class="highlight">'+word+'</p>' on the webpage!-->
+    			
+  		   	</tr>
+  		   
+  		  </form>
+  		   
+  		   <tr>
+    			<td> {{ reference_translation }} </td>
+   	 			<td> {% csrf_token %}{{ t }}</td>
+ 			 </tr>
+		</table>
+
+     </div>
+</div> 
+
+
+
+<!-- The evaluation of the user-->
+
+<div class="container">
+      <div class="simple">
+	 		<p> {% csrf_token %}{{ evaluate_user }} </p>
+     </div>
+</div>
+
+
+
+
+<div class="container">
+      <div class="simple">
+			<form>
+			 <input type="submit" name="next_sent" value="Next" />
+			</form>
+     </div>
+</div>
+
+			
+<li><a href='{% url "index" %}'> Back to main menu</a></li>
+
+</body>
+</html>
+
+
+
+ 
+ 

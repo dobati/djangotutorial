@@ -22,7 +22,20 @@ SECRET_KEY = 'a05)_p3#73#ntsi5+q5g(usw3q%lilj*3(5igcn6cs5=ow$vq('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
+#########################
+#FOR deployment 
+#
+#DEBUG = False
+#########################
+
+
+TEMPLATE_DEBUG = DEBUG
+
+#########################
+#FOR deployment 
+#TEMPLATE_DEBUG = False
+#########################
+
 
 ALLOWED_HOSTS = ['localhost']
 
@@ -73,7 +86,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Zurich'
 
 USE_I18N = True
 
@@ -82,27 +95,45 @@ USE_L10N = True
 USE_TZ = True
 
 
+#### Static files (CSS, JavaScript, Images)
+#### https://docs.djangoproject.com/en/1.7/howto/static-files/
+###
+###STATIC_URL = '/static/'
+###
+#### Templates location
+####TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
+###TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'polls/templates/polls')]
+###
+##### if templates and static in same directory as src
+####TEMPLATE_DIRS = (
+####    os.path.join(os.path.dirname(BASE_DIR), "static", "templates"),
+####)
+###
+###STATICFILES_DIRS = (
+###    os.path.join(BASE_DIR, "static"),
+###)
+
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
-
 STATIC_URL = '/static/'
 
+# Templates location
+#TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
+#TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'polls/templates/polls')]
 
-#if DEBUG:
+## if templates and static in same directory as src
+TEMPLATE_DIRS = (
+    os.path.join(os.path.dirname(BASE_DIR), "static", "templates"),
+)
 
-#STATIC_ROOT = ""
-
-STATICFILES_DIRS = (
-					os.path.join(BASE_DIR, "static"),
-					)
-
-
-
-
-
-
+if DEBUG:
+    STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static", "static-only")
+    STATICFILES_DIRS = (
+	os.path.join(os.path.dirname(BASE_DIR), "static", "static"),
+    )
 
 
 

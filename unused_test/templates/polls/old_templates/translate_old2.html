@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+        <title>
+            Let's translate!
+        </title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"></link>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"></link>
+        <link href="//brick.a.ssl.fastly.net/Linux+Libertine:400,600,700,400i,600i,700i/Roboto:300,400,300i,400i" rel="stylesheet"></link>
+        <link type="text/css" rel="stylesheet" href="{% static 'css/stylesheet.css' %}"></link>
+		<!--stylesheet for translate.html-->
+		<link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet_translate.css' %}"></link>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<!-- link to the css for the messi library (jquery needed) for the nice window with suggestions for the translation -->
+		<link rel="stylesheet" href= "{% static 'css/messi.min.css' %}" />
+		<!-- javascript (messi library) to have a nice looking pop up window with suggestions for the translation -->
+		<script src=" {% static 'js/messi.min.js' %}" ></script>
+		<!-- retrieve the javascript source for jquery -->
+		<script src=" {% static 'js/jquery-1.11.1.min.js' %}" ></script>
+		
+		
+		<script type="text/javascript"> 
+ 
+
+			function helpwords() { 
+			//with the cool-looking Messi javascript library
+			new Messi('words to be found in the database!'); 
+			
+			 // with the simply boring pop-up window from javascript:
+ 			//alert("words to be found in the database!"); 
+ 			}
+	
+			function disable_submit() {
+			//solange nicht auf next geclickt wird: 
+   			document.getElementById("mySubmit").disabled = true;
+   			}
+   
+		// if we just want to hide the button: document.getElementById("mySubmit").style.display='none';
+
+
+		</script>
+		
+    </head>
+    
+    <body>
+		
+        <div class="page-wrap">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <nav class="clearfix" role="navigation">
+                            <div class="col-md-6">
+                                <div class="logo">
+                                    <a href="/">
+                                            Vé
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <ul>
+                                    <li>
+                                        <a href="/ve/">
+                                            About Vé
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href='{% url "about_us" %}'>
+                                            About us
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+				<section class="trans-intro">
+					<div class="row">
+						<div class="col-md-10">
+							<p>
+								{{ chosen_topic  }}
+							</p>
+							<p>
+								Try to translate this sentence to Spanish:
+							</p>
+							<h3>
+								{% csrf_token %} {{ r }}
+							</h3>
+						</div>
+					</div>
+				</section>
+				<section class="translate">
+					<div class="row">
+						<div class="col-md-10">
+							
+							<!--Form (user input & submits have to be packed in the same div, otherwise the clicks wort work!)-->
+							<form  name="form" method="post" action="" autocomplete="off">
+								<!-- Text box for user input -->
+								<h3>
+									{% csrf_token %} {{ form.as_p }}	<!-- {{ form.as_p}} -->
+								</h3>
+								
+								<!-- HELP pop up window  -->
+								<input type="button" value="Help!" onclick="helpwords()"/>
+								
+								<!--  SUBMIT  button -->
+								<!-- it has to be disabled once the user has submitted the text
+								with the function disable_submit() the button is disabled only until the process of retrieving the translation in the database is on. 
+								After that, I still want the button to be disabled. The reason I am doing that:
+								if the user wants to see if his evaluation gets better by correcting something in his own input, 
+								instead of seeing the same reference translation after correcting it, he will get a new random sentence and its reference translation
+								To avoid having to adjust the code to that, I would rather just disable the button once its been clicked-->
+								
+								<input id = "mySubmit" type="submit" class="btn btn-success btn-md" value="Send" id = "mySubmit" onclick="disable_submit()" />
+								
+								<!-- other trys to disable the Send button once its benn clicked -->
+								<!--<button id = "mySubmit" onclick="myFunction()">Try it</button>-->
+								<!--<input  type="submit"  value="Send"  class="btn btn-success btn-md" /> onclick="disable_submit()"-->
+							</form>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-10">
+							<form action="" method="post">
+								<p>
+									{{ your_translation }}
+								</p>
+								<p>
+									{{ saved_tr | safe  }}		<!--  | safe  is wichtig! without safe we have '<p class="highlight">'+word+'</p>' on the webpage!-->
+								</p>
+							</form>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-10">
+							<p>
+								{{ reference_translation }}
+							</p>
+							<p>
+								{% csrf_token %}{{ t }}
+							</p>
+						</div>
+					</div>
+					
+					<!-- The evaluation of the user-->
+					<div class="row">
+						<div class="col-md-10">
+							<p>
+								{% csrf_token %}{{ evaluate_user }}
+							</p>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-10">
+						<form>
+							<input type="submit" name="next_sent" value="Next"/>
+						</form>
+						</div>
+					</div>
+				</section>
+            </div>
+        </div>
+		
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p id="copyright">
+                            © Letr 2014
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p id="contact">
+                            <a href="mailto:fleuen@gmx.ch">
+                                Contact us
+                            </a>
+                        </p>
+                    </div>
+                </div>  
+            </div>
+        </footer>
+    </body>
+</html>
