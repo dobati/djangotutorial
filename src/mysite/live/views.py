@@ -94,10 +94,10 @@ def movies1(request):
 	return trans(request, "Your choice: Movies, level 1", SubsEnEs, 1)
 
 def movies2(request):  
-	return trans(request, "Your choice: Movies, level 1", SubsEnEs, 2)
+	return trans(request, "Your choice: Movies, level 2", SubsEnEs, 2)
 
 def movies3(request):  
-	return trans(request, "Your choice: Movies, level 1", SubsEnEs, 3)
+	return trans(request, "Your choice: Movies, level 3", SubsEnEs, 3)
 	
 	
 def legaltexts1(request):
@@ -129,12 +129,16 @@ def trans(request, message, dbtable, levelchoice):
 	randomchoice = random.choice(dbtable.objects.filter(level=levelchoice))
 	random_list.append(randomchoice)	
 	machine_trans_of_randomchoice_tok = randomchoice.machine_translation_tok()
-	
+
 	
 	# call die help function to make suggestions to the user
 	help_words(randomchoice,machine_trans_of_randomchoice_tok)
 	
 	form = UserInputForm(request.POST or None)
+	
+	##### TESTING !!!!!
+	#print random_list
+	#print randomchoice
 	
 	if form.is_valid():
 		userinputmodel = UserInput()		

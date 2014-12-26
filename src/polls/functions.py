@@ -13,6 +13,7 @@ import distance
 # Function help()
 # ========================================================================================
 
+############# CHANGED ####################################################################
 def help_words(randomsent, randomsent_machinet):
 	"""
 	Takes as input translations as unicode strings and makes a list of  unique, 
@@ -21,35 +22,54 @@ def help_words(randomsent, randomsent_machinet):
 	"""
 	
 	global bothtranslations
-	
+
 	bothtranslations = []
 	patter_punct = r'([^a-zA-Z0-9_ÀÁÈÉÍÓÚÜàáèéíñóúü]+)'
 	pattern_no_punct = r'([a-zA-Z0-9_ÀÁÈÉÍÓÚÜàáèéíñóúü]+)'
-	
+	exclude = set(string.punctuation)
 	# split where not ES alphanumeric
-	randomchoice_translation = re.split(patter_punct, randomsent.translation().encode('utf8'))
-	randomchoice_machinetranslation = re.split(patter_punct, randomsent_machinet.encode('utf8'))	
-		
-	both = randomchoice_translation + randomchoice_machinetranslation
 	
-	for word in both:
-		word = word.lower()
-		m = re.match(pattern_no_punct, word)
-		# get only words, no punct and whitespace
-		if m:
-			bothtranslations.append(word)
+	randomchoice_translation = randomsent.translation().encode('utf8').split()	
+	refsp_without_inverted_marks = []
+	
+	for word in randomchoice_translation:
+		for punc in exclude:
+
+			if not word.startswith(punc) and not word.endswith(punc): ##favor...píntame
+				word = word.lower().replace('¡','').replace('¿', '').replace(punc, ' ')
+			
+			else:
+				word = word.lower().replace('¡','').replace('¿', '').replace(punc, '')          	
+                refsp_without_inverted_marks.append(word)
+                                                       
+        for word in refsp_without_inverted_marks:
+            m = re.match(pattern_no_punct, word)
+            if word.isalnum() or m:
+                bothtranslations.append(word)
+	
+
+        randomchoice_machinetranslation = randomsent_machinet.encode('utf8').split()
+	
+	for word in randomchoice_machinetranslation:
+#            # this is not necces. here, but we can use it if we want to be 100% 
+           word = word.lower().replace('¡','').replace('¿', '')
+           m = re.match(pattern_no_punct, word)
+           if word.isalnum() or m:
+                bothtranslations.append(word)
+	
 	
 	random.shuffle(bothtranslations)
 	bothtranslations = list(set(bothtranslations))
 	bothtranslations = ' '.join(bothtranslations)
 	
+	b_list = bothtranslations.split()
+	#print 'b_list\t', b_list
+	
 	return bothtranslations
 
 
-# Function spelling_checker
-# ========================================================================================
-
-def spelling_checker(inputsentence):
+#################################added 3 more arguments to the function
+def spelling_checker(inputsentence, reft, mtdetok, mttok):
 
 	"""
 	Function for checking the spelling of each word in users sentence and 
@@ -66,14 +86,29 @@ def spelling_checker(inputsentence):
 	
 	trans_no_punct = re.split(patter_punct, saved_tr)	# get a list of token including whitespace and punct as token
 	
+	#################################################################################
+	### added list with the set of all words all the which appear in the translations:
+	# words in translations should be marked as spelled correctly
+	words_in_translations = []
+	reft = reft.encode('utf8').split()
+	mtdetok = mtdetok.encode('utf8').split()
+	mttok = mttok.encode('utf8').split()
+	words_in_translations = list(set(reft + mtdetok + mttok)) 
+	# maybe we should include them lowercased too
+	#################################################################################
+
 	spelled_list = []
+
+	
+	
 	for word in trans_no_punct:
 		
 		m = re.match(pattern_no_punct, word)	# match all words with no punct
 		
 		if 'ñ' in word:		# most words with ñ not recognized by aspell, so just append them (TO DO: add diacritics to ES dict)
 			spelled_list.append(word)
-		
+			
+
 		else:
 			word1 = word.decode('utf8')
 			word1 = unicodedata.normalize('NFKD', word1).encode('ASCII', 'ignore')	# replace diacritics to nearest ascii letter
@@ -82,7 +117,9 @@ def spelling_checker(inputsentence):
 			if word == word1:
 				if m:
 					checked_spelling = spelling.check(word)
-					if checked_spelling != 1:
+					#########################################
+					### added and word not in words_in_translations:
+					if checked_spelling != 1 and word not in words_in_translations:				
 						word = '<highlight>'+word+'</highlight>'	#'underline the false pronounced word (save_it) in the translation'
 						spelled_list.append(word)
 					else:
@@ -95,7 +132,9 @@ def spelling_checker(inputsentence):
 			else:
 				if m:
 					checked_spelling = spelling.check(word1)
-					if checked_spelling != 1:
+					#########################################
+					### added and word not in words_in_translations:
+					if checked_spelling != 1 and word not in words_in_translations:
 						word = '<highlight>'+word+'</highlight>' 	#'underline the false pronounced word (save_it) in the translation'
 						spelled_list.append(word)
 					else:
@@ -136,8 +175,9 @@ def compare_ref(usertrans, targettrans):
 	# remove punctuation
 	replace_punctuation = string.maketrans(string.punctuation, ' '*len(string.punctuation))
 	
-	tt = tt.translate(replace_punctuation).lower().split()	
-	ut = ut.translate(replace_punctuation).lower().split()
+	# added  .replace('¿','').replace('¡','') because the string method does not recognize ¿¡
+	tt = tt.translate(replace_punctuation).lower().replace('¿','').replace('¡','').split()	
+	ut = ut.translate(replace_punctuation).lower().replace('¿','').replace('¡','').split()
 	
 	# if less than 5 words in both sentences
 	if len(tt) < 5 and len(ut) < 5:
@@ -280,12 +320,13 @@ def compare_mt(usertrans, referencetrans, machinetrans):
 	than machine translation
 	"""
 	
+	# deleted: 'You did as good as the machine translation!'
 	evaluation = {'better': ['Congratulations, you did better than the machine translation!', \
 							 'Be proud, you were better than the machine translation!', \
 							 'You are the best, even better than the machine translation!'], \
-					'same': ['You did as good as the machine translation!', \
+					'same': [
 							 'This is a tie between you and the machine translation!', \
-							 'The machine translation was as good as you!'], \
+							 'The machine translation was about as good as you!'], \
 					'worst': ["The machine translation beat you, let's try to do better!", \
 							  "What a shame, you were defeated by the machine translation.", \
 							  "Next time, you will beat the machine translation, but not this time!"]}
@@ -295,12 +336,14 @@ def compare_mt(usertrans, referencetrans, machinetrans):
 	tt = referencetrans.encode('utf8')
 	mt = machinetrans.encode('utf8')
 	
+			
 	# remove punctuation
 	replace_punctuation = string.maketrans(string.punctuation, ' '*len(string.punctuation))
 	
-	ut = ut.translate(replace_punctuation).lower()
-	tt = tt.translate(replace_punctuation).lower()
-	mt = mt.translate(replace_punctuation).lower()
+	#added  .replace('¿','').replace('¡','') because the string method does not recognize ¿¡
+	ut = ut.translate(replace_punctuation).lower().replace('¿','').replace('¡','')
+	tt = tt.translate(replace_punctuation).lower().replace('¿','').replace('¡','')
+	mt = mt.translate(replace_punctuation).lower().replace('¿','').replace('¡','')
 	
 	# levensthein characters ratio
 	lev_let_ut = lev.ratio(tt, ut)
@@ -321,10 +364,29 @@ def compare_mt(usertrans, referencetrans, machinetrans):
 	ratio_ut = max(lev_let_ut, lev_tok_ut)
 	ratio_mt = max(lev_let_mt, lev_tok_mt)
 	
+	print 'ratio_ut\t', ratio_ut
+	print 'ratio_mt\t', ratio_mt
+	
+	########################################################
+	# added:
+	#
 	# evaluate if user better, worst or similar than machine
-	if ratio_ut > ratio_mt:
-		return random.choice(evaluation['better'])
-	elif ratio_ut < ratio_mt:
-		return random.choice(evaluation['worst'])
-	else:
+	
+	# 
+	if abs(ratio_ut - ratio_mt) < 0.05:
 		return random.choice(evaluation['same'])
+	elif (ratio_ut - ratio_mt) >= 0.05:
+		return random.choice(evaluation['better'])
+	elif (ratio_mt - ratio_ut) >= 0.05:
+		return random.choice(evaluation['worst'])
+	# TO DO: add some more specific evaluations and tie the two Feedbacks together
+	
+	# was before:
+	
+	#if ratio_ut > ratio_mt:
+	#	return random.choice(evaluation['better'])
+	#elif ratio_ut < ratio_mt:
+	#	return random.choice(evaluation['worst'])
+	#else:
+	#	return random.choice(evaluation['same'])
+	#

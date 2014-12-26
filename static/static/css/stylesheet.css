@@ -146,6 +146,7 @@ nav ul li:first-child {
 .inside-box {
     margin-top: 15px;
     text-align: center;
+    width: 100%;
 }
 #gen {
     font-size: 19px;
@@ -164,6 +165,7 @@ nav ul li:first-child {
 }
 .box a {
     text-decoration: none;
+    display: inline-block;
 }
 /*
 --------------

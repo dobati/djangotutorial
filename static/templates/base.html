@@ -15,6 +15,9 @@
         {% block content404 %}
         {% endblock %}
         
+
+	<!-- retrieve the javascript source for jquery -->
+	<script src="{% static 'js/jquery-1.11.1.min.js' %}" ></script>
         
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"></link>
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"></link>
@@ -25,10 +28,9 @@
 	<link rel="stylesheet" href= "{% static 'css/messi.min.css' %}" />
 
 	<!-- javascript (messi library) to have a nice looking pop up window with suggestions for the translation -->
-	<script src=" {% static 'js/messi.min.js' %}" ></script>
+	<script src="{% static 'js/messi.min.js' %}" ></script>
 	
-	<!-- retrieve the javascript source for jquery -->
-	<script src=" {% static 'js/jquery-1.11.1.min.js' %}" ></script>
+
 		
 	<script src="{% static 'js/ve.js' %}"></script>
 

@@ -46,6 +46,7 @@ from .functions import compare_mt
 import json as simplejson
 from django.core import serializers
 
+from collections import defaultdict
 
 # Views for the index and about us pages
 # ========================================================================================
@@ -92,10 +93,10 @@ def movies1(request):
 	return trans(request, "Your choice: Movies, level 1", SubsEnEs, 1)
 
 def movies2(request):  
-	return trans(request, "Your choice: Movies, level 1", SubsEnEs, 2)
+	return trans(request, "Your choice: Movies, level 2", SubsEnEs, 2)
 
 def movies3(request):  
-	return trans(request, "Your choice: Movies, level 1", SubsEnEs, 3)
+	return trans(request, "Your choice: Movies, level 3", SubsEnEs, 3)
 	
 	
 def legaltexts1(request):
@@ -113,14 +114,11 @@ def legaltexts3(request):
 
 random_list = []
 
-#counter = 0
-
 def trans(request, message, dbtable, levelchoice):
     
 	"""Main function: takes the user input and returns the reference translation
 	after the user submits the input"""
-	
-	
+		
 	
 	chosen_topic = message
 	your_translation = 'Your translation:'
@@ -131,22 +129,35 @@ def trans(request, message, dbtable, levelchoice):
 	random_list.append(randomchoice)	
 	machine_trans_of_randomchoice_tok = randomchoice.machine_translation_tok()
 	
+	if len(random_list) > 2:
+	    del random_list[0]
+	if len(random_list) == 1:
+	    # test so, if not this than just add another *new* random choice as first or sec element
+	    random_list.append(randomchoice)
+	    
 	
 	# call die help function to make suggestions to the user
 	help_words(randomchoice,machine_trans_of_randomchoice_tok)
 	
+	###
+	print 'HELPWORDS\t', help_words(randomchoice,machine_trans_of_randomchoice_tok)
+	###
 	form = UserInputForm(request.POST or None)
 	
 	if form.is_valid():
 		userinputmodel = UserInput()		
 		userinputmodel.translation = form.cleaned_data.get('form_translation')
 		previous_randomchoice = random_list[-2]
-		saved_trans = userinputmodel.translation 	
-		spelling_checker(saved_trans)
-		
+		saved_trans = userinputmodel.translation
+		###############################################################
+		####added 3 more arguments to the spelling checker function:
+		spelling_checker(saved_trans, previous_randomchoice.translation(), previous_randomchoice.machine_translation_detok(), previous_randomchoice.machine_translation_tok() )
+		###############################################################
+
 		feedback_user = compare_ref(saved_trans, previous_randomchoice.translation())
 		compare_to_mt = compare_mt(saved_trans, previous_randomchoice.translation(), previous_randomchoice.machine_translation_detok())
-				
+		
+		
 		return render(request, "translate.html", 
                                           { 
 					    'chosen_topic': message,
@@ -172,3 +183,8 @@ def trans(request, message, dbtable, levelchoice):
 			'form': form,
 			'js_data': functions.bothtranslations, # js_data muss die help funktion aufrufen
 		    })
+
+
+
+	
+	

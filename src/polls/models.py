@@ -170,11 +170,5 @@ class UserInput(models.Model):
 #bis hier
 ##########################################################################################
 
-# if you have time to implement other random function
 
-# class Random(models.Manager):
-#     def random(db):
-#         count = db.aggregate(count=Count('id'))['count']
-#         random_index = randint(0, count - 1)
-#         return db.all()[random_index]
 
